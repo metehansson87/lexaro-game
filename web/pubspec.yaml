@@ -1,0 +1,29 @@
+name: gameguess
+description: A word puzzle game where you guess video game titles.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  confetti: ^0.7.0
+  flutter_animate: ^4.3.0
+  google_fonts: ^6.1.0
+  google_mobile_ads: ^5.1.0
+  share_plus: ^10.0.2
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
