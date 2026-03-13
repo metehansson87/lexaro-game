@@ -10,6 +10,7 @@ class AiOpponent {
   final Random _random = Random();
   Timer? _solveTimer;
   Timer? _hintTimer;
+  final List<Timer> _pendingTimers = [];
 
   AiOpponent({required this.difficulty});
 
@@ -98,10 +99,11 @@ class AiOpponent {
     // Possibly make a mistake first
     if (_random.nextDouble() < _mistakeChance) {
       final mistakeDelay = solveDelay ~/ 3 + _random.nextInt(solveDelay ~/ 3);
-      Timer(Duration(milliseconds: mistakeDelay), () {
+      final mistakeTimer = Timer(Duration(milliseconds: mistakeDelay), () {
         final wrongAnswer = _generateWrongAnswer(puzzle);
         onWrongAnswer?.call(wrongAnswer);
       });
+      _pendingTimers.add(mistakeTimer);
     }
 
     if (willSolve) {
@@ -118,12 +120,13 @@ class AiOpponent {
     final hintCount = 1 + _random.nextInt(3);
     for (int i = 0; i < hintCount; i++) {
       final hintDelay = (totalDelay * (0.2 + 0.15 * i)).toInt();
-      Timer(Duration(milliseconds: hintDelay), () {
+      final timer = Timer(Duration(milliseconds: hintDelay), () {
         if (_hintsUsed < AppConstants.maxHintsPerRound) {
           _hintsUsed++;
           onHintUsed?.call();
         }
       });
+      _pendingTimers.add(timer);
     }
   }
 
@@ -146,6 +149,10 @@ class AiOpponent {
     _solveTimer = null;
     _hintTimer?.cancel();
     _hintTimer = null;
+    for (final timer in _pendingTimers) {
+      timer.cancel();
+    }
+    _pendingTimers.clear();
   }
 
   void dispose() {

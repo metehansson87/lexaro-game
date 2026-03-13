@@ -407,9 +407,11 @@ class _MatchScreenState extends State<MatchScreen> {
   Widget _buildMatchResult(BuildContext context) {
     final playerWon = _player1Score > _player2Score;
     final draw = _player1Score == _player2Score;
-    final goldEarned = playerWon
-        ? AppConstants.matchWinGold
-        : AppConstants.matchLossGold;
+    final goldEarned = draw
+        ? AppConstants.matchLossGold
+        : playerWon
+            ? AppConstants.matchWinGold
+            : AppConstants.matchLossGold;
 
     return Scaffold(
       body: SafeArea(

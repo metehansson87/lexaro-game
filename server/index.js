@@ -154,6 +154,10 @@ gameRooms.on('round:timeout', (data) => {
   io.to(data.matchId).emit('round:timeout', data);
 });
 
+gameRooms.on('round:result', (data) => {
+  io.to(data.matchId).emit('round:result', data);
+});
+
 gameRooms.on('match:complete', (data) => {
   io.to(data.matchId).emit('match:complete', data);
 });
