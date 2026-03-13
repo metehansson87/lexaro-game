@@ -41,7 +41,7 @@ class PuzzleEngine {
    */
   getDailyPuzzle(language = 'en') {
     const now = new Date();
-    const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+    const seed = now.getUTCFullYear() * 10000 + (now.getUTCMonth() + 1) * 100 + now.getUTCDate();
 
     const langPuzzles = this.puzzles.get(language);
     if (!langPuzzles) return this._getFallbackPuzzle();

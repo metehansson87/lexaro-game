@@ -96,10 +96,9 @@ io.on('connection', (socket) => {
 
   socket.on('round:answer', (data) => {
     const { matchId, answer } = data;
-    const result = gameRooms.submitAnswer(matchId, socket.id, answer);
-    if (result) {
-      io.to(matchId).emit('round:result', result);
-    }
+    // submitAnswer internally calls _endRound which emits 'round:result'
+    // via EventEmitter, so we don't emit again here to avoid duplicates
+    gameRooms.submitAnswer(matchId, socket.id, answer);
   });
 
   socket.on('round:hint', (data) => {
