@@ -54,7 +54,7 @@ class AppRouter {
         return _buildRoute(const MatchmakingScreen(), routeSettings);
 
       case match:
-        final args = routeSettings.arguments as MatchScreenArgs;
+        final args = routeSettings.arguments as MatchScreenArgs? ?? const MatchScreenArgs();
         return _buildRoute(MatchScreen(args: args), routeSettings);
 
       case leaderboard:

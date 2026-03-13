@@ -60,9 +60,9 @@ class GameKeyboard extends StatelessWidget {
                 children: [
                   _actionButton(
                     icon: Icons.lightbulb_rounded,
-                    label: 'Hint ($hintsRemaining)',
+                    label: hintsRemaining < 0 ? 'Hint' : 'Hint ($hintsRemaining)',
                     color: AppColors.accent,
-                    onTap: hintsRemaining > 0 ? onHint : null,
+                    onTap: hintsRemaining != 0 ? onHint : null,
                   ),
                   const SizedBox(width: 12),
                   _actionButton(

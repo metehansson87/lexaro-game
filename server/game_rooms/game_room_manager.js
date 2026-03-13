@@ -107,14 +107,17 @@ class GameRoomManager extends EventEmitter {
     const room = this.rooms.get(matchId);
     if (!room) return;
 
+    // Capture player identity at disconnect time (socketId is mutable on reconnect)
+    const isPlayer1 = room.player1.socketId === socketId;
+    const disconnectedPlayerId = isPlayer1 ? room.player1.playerId : room.player2.playerId;
+
     room.disconnectedPlayer = socketId;
     room.disconnectTime = Date.now();
 
     // Allow 30 seconds to reconnect
     room.disconnectTimer = setTimeout(() => {
       if (room.disconnectedPlayer === socketId) {
-        // Forfeit the match
-        const isPlayer1 = room.player1.socketId === socketId;
+        // Forfeit the match — use captured identity, not mutable socketId
         const winnerId = isPlayer1 ? room.player2.playerId : room.player1.playerId;
         this._completeMatch(matchId, winnerId, 'disconnect');
       }
