@@ -72,15 +72,17 @@ class _MatchScreenState extends State<MatchScreen> {
   }
 
   void _startNextRound() {
-    _currentRound++;
-    if (_currentRound > AppConstants.matchRounds || _matchOver) {
-      setState(() => _matchOver = true);
-      return;
-    }
+    if (_matchOver) return;
 
     // Check if someone already won (first to 3)
     if (_player1Score >= MatchModel.winsRequired ||
         _player2Score >= MatchModel.winsRequired) {
+      setState(() => _matchOver = true);
+      return;
+    }
+
+    _currentRound++;
+    if (_currentRound > AppConstants.matchRounds) {
       setState(() => _matchOver = true);
       return;
     }

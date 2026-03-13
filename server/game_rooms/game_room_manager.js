@@ -280,19 +280,26 @@ class GameRoomManager extends EventEmitter {
 
     if (room.roundTimer) {
       clearInterval(room.roundTimer);
+      room.roundTimer = null;
     }
     if (room.aiTimer) {
       clearTimeout(room.aiTimer);
       room.aiTimer = null;
     }
 
-    // Update leaderboard
+    // Update leaderboard (skip AI players)
     if (winnerId) {
-      this.leaderboard.recordWin(winnerId, room.player1Score + room.player2Score);
-      const loserId = winnerId === room.player1.playerId
-        ? room.player2.playerId
-        : room.player1.playerId;
-      this.leaderboard.recordLoss(loserId);
+      const isWinnerPlayer1 = winnerId === room.player1.playerId;
+      const winnerIsAi = isWinnerPlayer1 ? room.player1.isAi : room.player2.isAi;
+      const loserIsAi = isWinnerPlayer1 ? room.player2.isAi : room.player1.isAi;
+      const loserId = isWinnerPlayer1 ? room.player2.playerId : room.player1.playerId;
+
+      if (!winnerIsAi) {
+        this.leaderboard.recordWin(winnerId, room.player1Score + room.player2Score);
+      }
+      if (!loserIsAi) {
+        this.leaderboard.recordLoss(loserId);
+      }
     }
 
     const matchResult = {
