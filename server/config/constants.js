@@ -1,0 +1,35 @@
+module.exports = {
+  // Match
+  MATCH_ROUNDS: 5,
+  WINS_REQUIRED: 3,
+  ROUND_DURATION_SECONDS: 45,
+  MAX_HINTS_PER_ROUND: 5,
+
+  // Economy
+  STARTING_GOLD: 50,
+  HINT_COST: 1,
+  MATCH_WIN_GOLD: 15,
+  MATCH_LOSS_GOLD: 3,
+  DAILY_PUZZLE_REWARD: 10,
+
+  // Matchmaking
+  MATCHMAKING_TIMEOUT_MS: 15000,
+  AI_FALLBACK_DELAY_MS: 10000,
+
+  // AI Timing
+  AI_EASY_MIN_MS: 15000,
+  AI_EASY_MAX_MS: 35000,
+  AI_MEDIUM_MIN_MS: 8000,
+  AI_MEDIUM_MAX_MS: 22000,
+  AI_HARD_MIN_MS: 3000,
+  AI_HARD_MAX_MS: 12000,
+
+  // Leagues
+  LEAGUE_BRONZE: 0,
+  LEAGUE_SILVER: 500,
+  LEAGUE_GOLD: 2000,
+  LEAGUE_DIAMOND: 5000,
+
+  // Supported languages
+  LANGUAGES: ['en', 'tr', 'de', 'it', 'fr', 'es'],
+};
