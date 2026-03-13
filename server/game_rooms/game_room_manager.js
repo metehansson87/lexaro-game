@@ -106,6 +106,7 @@ class GameRoomManager extends EventEmitter {
 
     const room = this.rooms.get(matchId);
     if (!room) return;
+    if (room.status === 'completed') return;
 
     // Capture player identity at disconnect time (socketId is mutable on reconnect)
     const isPlayer1 = room.player1.socketId === socketId;
@@ -277,6 +278,7 @@ class GameRoomManager extends EventEmitter {
   _completeMatch(matchId, winnerId, reason) {
     const room = this.rooms.get(matchId);
     if (!room) return;
+    if (room.status === 'completed') return;
 
     room.status = 'completed';
     room.winnerId = winnerId;
@@ -288,6 +290,10 @@ class GameRoomManager extends EventEmitter {
     if (room.aiTimer) {
       clearTimeout(room.aiTimer);
       room.aiTimer = null;
+    }
+    if (room.disconnectTimer) {
+      clearTimeout(room.disconnectTimer);
+      room.disconnectTimer = null;
     }
 
     // Update leaderboard (skip AI players)
@@ -312,7 +318,8 @@ class GameRoomManager extends EventEmitter {
       player1Score: room.player1Score,
       player2Score: room.player2Score,
       rounds: room.rounds,
-      goldReward: winnerId ? MATCH_WIN_GOLD : MATCH_LOSS_GOLD,
+      winnerGoldReward: winnerId ? MATCH_WIN_GOLD : MATCH_LOSS_GOLD,
+      loserGoldReward: MATCH_LOSS_GOLD,
     };
 
     this.emit('match:complete', matchResult);
