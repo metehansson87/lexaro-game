@@ -275,15 +275,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(
-                        'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
+                      Image.asset(
+                        'assets/images/google_logo.png',
                         width: 22,
                         height: 22,
-                        errorBuilder: (_, __, ___) => const Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.white,
-                          size: 28,
-                        ),
                       ),
                       const SizedBox(width: 12),
                       const Text(
