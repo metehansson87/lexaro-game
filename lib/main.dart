@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routing/app_router.dart';
 import 'features/auth/presentation/auth_screen.dart';
+import 'features/language_select/presentation/language_select_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/puzzle/presentation/puzzle_screen.dart';
 import 'features/multiplayer/presentation/matchmaking_screen.dart';
@@ -56,7 +57,7 @@ class LexaroApp extends StatelessWidget {
       title: 'Lexaro',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
-      initialRoute: AppRouter.auth,
+      initialRoute: AppRouter.languageSelect,
       onGenerateRoute: _generateRoute,
     );
   }
@@ -65,8 +66,12 @@ class LexaroApp extends StatelessWidget {
     Widget page;
 
     switch (settings.name) {
+      case AppRouter.languageSelect:
+        page = const LanguageSelectScreen();
+        break;
       case AppRouter.auth:
-        page = const AuthScreen();
+        final language = settings.arguments as String? ?? 'en';
+        page = AuthScreen(selectedLanguage: language);
         break;
       case AppRouter.home:
         page = const HomeScreen();

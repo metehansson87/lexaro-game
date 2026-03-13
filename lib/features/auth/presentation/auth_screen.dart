@@ -4,9 +4,11 @@ import '../../../core/theme/app_decorations.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/routing/app_router.dart';
 
-/// Authentication screen with login, register, and guest play options.
+/// Authentication screen with login, register, Google sign-in, and guest play.
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  final String selectedLanguage;
+
+  const AuthScreen({super.key, this.selectedLanguage = 'en'});
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -33,6 +35,25 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() => _isLoading = true);
 
     // In production: Firebase Auth login/register
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, AppRouter.home);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+
+    // In production: Firebase Auth Google sign-in
+    // final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    // final credential = GoogleAuthProvider.credential(
+    //   accessToken: googleAuth?.accessToken,
+    //   idToken: googleAuth?.idToken,
+    // );
+    // await FirebaseAuth.instance.signInWithCredential(credential);
+
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
@@ -83,12 +104,72 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Word Puzzle Battle',
+                  'Game Puzzle Battle',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
                 ),
                 const SizedBox(height: 48),
+
+                // Google Sign-In Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _signInWithGoogle,
+                    icon: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'G',
+                          style: TextStyle(
+                            color: Color(0xFF4285F4),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    label: const Text('Sign in with Google'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.surface,
+                      foregroundColor: AppColors.textPrimary,
+                      side: BorderSide(
+                          color: AppColors.primary.withAlpha(128)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Divider - between Google and email form
+                Row(
+                  children: [
+                    Expanded(
+                        child: Divider(
+                            color: AppColors.textMuted.withAlpha(77))),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'OR',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                    Expanded(
+                        child: Divider(
+                            color: AppColors.textMuted.withAlpha(77))),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
 
                 // Form
                 Form(
@@ -161,26 +242,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
-
-                // Divider
-                Row(
-                  children: [
-                    Expanded(
-                        child: Divider(color: AppColors.textMuted.withAlpha(77))),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'OR',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                    Expanded(
-                        child: Divider(color: AppColors.textMuted.withAlpha(77))),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 // Guest play
                 SizedBox(

@@ -9,6 +9,7 @@ import '../../features/daily_puzzle/presentation/daily_puzzle_screen.dart';
 import '../../features/achievements/presentation/achievements_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/auth/presentation/auth_screen.dart';
+import '../../features/language_select/presentation/language_select_screen.dart';
 
 /// Centralized route definitions and navigation.
 class AppRouter {
@@ -16,6 +17,7 @@ class AppRouter {
 
   // ── Route Names ───────────────────────────────────────────────────────────
   static const String splash = '/';
+  static const String languageSelect = '/language-select';
   static const String auth = '/auth';
   static const String home = '/home';
   static const String puzzle = '/puzzle';
@@ -31,8 +33,12 @@ class AppRouter {
   // ── Route Generation ──────────────────────────────────────────────────────
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
+      case languageSelect:
+        return _buildRoute(const LanguageSelectScreen(), routeSettings);
+
       case auth:
-        return _buildRoute(const AuthScreen(), routeSettings);
+        final language = routeSettings.arguments as String? ?? 'en';
+        return _buildRoute(AuthScreen(selectedLanguage: language), routeSettings);
 
       case home:
         return _buildRoute(const HomeScreen(), routeSettings);

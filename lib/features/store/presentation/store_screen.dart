@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_decorations.dart';
+import '../../../providers/game_providers.dart';
 
 /// In-game store for purchasing gold, watching ads, and unlocking cosmetics.
-class StoreScreen extends StatelessWidget {
+class StoreScreen extends ConsumerWidget {
   const StoreScreen({super.key});
 
+  void _purchaseGold(BuildContext context, WidgetRef ref, int amount) {
+    ref.read(playerProvider.notifier).addGold(amount);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('+$amount gold added to your account!'),
+        backgroundColor: AppColors.success,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final player = ref.watch(playerProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Store'),
@@ -17,14 +32,14 @@ class StoreScreen extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: AppDecorations.badge(color: AppColors.accent),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.monetization_on, color: AppColors.accent, size: 18),
-                SizedBox(width: 4),
+                const Icon(Icons.monetization_on, color: AppColors.accent, size: 18),
+                const SizedBox(width: 4),
                 Text(
-                  '50',
-                  style: TextStyle(
+                  '${player.gold}',
+                  style: const TextStyle(
                     color: AppColors.accent,
                     fontWeight: FontWeight.bold,
                   ),
@@ -48,7 +63,7 @@ class StoreScreen extends StatelessWidget {
             // Gold packages
             _sectionTitle(context, 'Gold Packages'),
             const SizedBox(height: 12),
-            _buildGoldPackages(context),
+            _buildGoldPackages(context, ref),
             const SizedBox(height: 24),
 
             // Avatars
@@ -158,7 +173,7 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGoldPackages(BuildContext context) {
+  Widget _buildGoldPackages(BuildContext context, WidgetRef ref) {
     final packages = [
       _GoldPackage('Starter', 100, '\$0.99', AppColors.success),
       _GoldPackage('Popular', 500, '\$3.99', AppColors.primary),
@@ -178,63 +193,66 @@ class StoreScreen extends StatelessWidget {
       itemCount: packages.length,
       itemBuilder: (context, index) {
         final pkg = packages[index];
-        return Container(
-          padding: const EdgeInsets.all(14),
-          decoration: AppDecorations.cardElevated(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (index == 1)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(8),
+        return GestureDetector(
+          onTap: () => _purchaseGold(context, ref, pkg.amount),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: AppDecorations.cardElevated(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (index == 1)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'POPULAR',
+                      style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
                   ),
-                  child: const Text(
-                    'POPULAR',
-                    style: TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-              const SizedBox(height: 4),
-              Icon(Icons.monetization_on_rounded,
-                  color: pkg.color, size: 36),
-              const SizedBox(height: 8),
-              Text(
-                '${pkg.amount}',
-                style: TextStyle(
-                  color: pkg.color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                ),
-              ),
-              Text(
-                'Gold',
-                style: TextStyle(
-                    color: pkg.color.withAlpha(179), fontSize: 12),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  color: pkg.color.withAlpha(26),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: pkg.color.withAlpha(102)),
-                ),
-                child: Text(
-                  pkg.price,
+                const SizedBox(height: 4),
+                Icon(Icons.monetization_on_rounded,
+                    color: pkg.color, size: 36),
+                const SizedBox(height: 8),
+                Text(
+                  '${pkg.amount}',
                   style: TextStyle(
                     color: pkg.color,
                     fontWeight: FontWeight.bold,
+                    fontSize: 22,
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  'Gold',
+                  style: TextStyle(
+                      color: pkg.color.withAlpha(179), fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: pkg.color.withAlpha(26),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: pkg.color.withAlpha(102)),
+                  ),
+                  child: Text(
+                    pkg.price,
+                    style: TextStyle(
+                      color: pkg.color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

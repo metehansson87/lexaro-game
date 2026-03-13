@@ -234,6 +234,40 @@ class _MatchScreenState extends State<MatchScreen> {
         child: Column(
           children: [
             _buildMatchHud(context),
+            // Hint counter for online matches
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withAlpha(26),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.accent.withAlpha(77)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.lightbulb_rounded,
+                            color: AppColors.accent, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Hints: $_hintsUsed / ${AppConstants.maxHintsPerRound}',
+                          style: const TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),

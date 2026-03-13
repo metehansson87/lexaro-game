@@ -10,10 +10,10 @@ class StorageService {
   StorageService._();
 
   static Future<StorageService> getInstance() async {
-    if (_instance == null) {
-      _instance = StorageService._();
-      _instance!._prefs = await SharedPreferences.getInstance();
-    }
+    if (_instance != null) return _instance!;
+    final instance = StorageService._();
+    instance._prefs = await SharedPreferences.getInstance();
+    _instance = instance;
     return _instance!;
   }
 

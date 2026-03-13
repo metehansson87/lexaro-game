@@ -220,7 +220,7 @@ class GameRoomManager extends EventEmitter {
 
   _endRound(matchId, winnerId) {
     const room = this.rooms.get(matchId);
-    if (!room) return null;
+    if (!room || !room.currentPuzzle) return null;
 
     if (room.roundTimer) {
       clearInterval(room.roundTimer);

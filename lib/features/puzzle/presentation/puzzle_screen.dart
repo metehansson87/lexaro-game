@@ -168,7 +168,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
 
   void _useHint() {
     if (_solved || _failed || _puzzle == null) return;
-    if (_hintsUsed >= AppConstants.maxHintsPerRound) return;
+    // Offline mode: unlimited hints (no limit check)
 
     final hint = _scrambleEngine.revealHint(
       puzzle: _puzzle!,
@@ -258,7 +258,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
                 onDelete: _deleteLetter,
                 onHint: _useHint,
                 onShuffle: _shuffleLetters,
-                hintsRemaining: AppConstants.maxHintsPerRound - _hintsUsed,
+                hintsRemaining: -1, // unlimited hints in offline mode
               ),
           ],
         ),
