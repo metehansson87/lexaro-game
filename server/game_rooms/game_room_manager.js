@@ -226,6 +226,10 @@ class GameRoomManager extends EventEmitter {
       clearInterval(room.roundTimer);
       room.roundTimer = null;
     }
+    if (room.aiTimer) {
+      clearTimeout(room.aiTimer);
+      room.aiTimer = null;
+    }
 
     const elapsed = Date.now() - room.roundStartTime;
 
@@ -276,6 +280,10 @@ class GameRoomManager extends EventEmitter {
 
     if (room.roundTimer) {
       clearInterval(room.roundTimer);
+    }
+    if (room.aiTimer) {
+      clearTimeout(room.aiTimer);
+      room.aiTimer = null;
     }
 
     // Update leaderboard

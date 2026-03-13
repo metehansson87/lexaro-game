@@ -35,6 +35,7 @@ class LiveOpsEvent {
   bool get isExpired => DateTime.now().toUtc().isAfter(endDate);
 
   Duration get timeRemaining => endDate.difference(DateTime.now().toUtc());
+  Duration get timeUntilStart => startDate.difference(DateTime.now().toUtc());
 
   Map<String, dynamic> toJson() => {
         'id': id,

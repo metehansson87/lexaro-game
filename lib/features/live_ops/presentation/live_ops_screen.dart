@@ -167,7 +167,7 @@ class LiveOpsScreen extends StatelessWidget {
                 Text(
                   isActive
                       ? 'Ends in ${event.timeRemaining}'
-                      : 'Starts in ${event.timeRemaining}',
+                      : 'Starts in ${event.timeUntilStart}',
                   style: const TextStyle(
                       color: AppColors.textMuted, fontSize: 12),
                 ),

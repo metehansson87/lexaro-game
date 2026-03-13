@@ -18,7 +18,7 @@ class DailyPuzzleScreen extends StatefulWidget {
 
 class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> {
   final PuzzleRepository _repo = PuzzleRepository();
-  final bool _completed = false;
+  bool _completed = false;
   PuzzleModel? _dailyPuzzle;
 
   @override
