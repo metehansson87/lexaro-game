@@ -1,129 +1,119 @@
-// lib/main.dart
-// App entry point. Sets up Provider + theme and loads player data.
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'services/game_provider.dart';
-import 'services/ad_service.dart';
-import 'theme/app_theme.dart';
-import 'screens/home_screen.dart';
-import 'screens/leaderboard_screen.dart';
-import 'screens/store_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/theme/app_theme.dart';
+import 'core/routing/app_router.dart';
+import 'features/auth/presentation/auth_screen.dart';
+import 'features/language_select/presentation/language_select_screen.dart';
+import 'features/home/presentation/home_screen.dart';
+import 'features/puzzle/presentation/puzzle_screen.dart';
+import 'features/multiplayer/presentation/matchmaking_screen.dart';
+import 'features/multiplayer/presentation/match_screen.dart';
+import 'features/leaderboard/presentation/leaderboard_screen.dart';
+import 'features/store/presentation/store_screen.dart';
+import 'features/achievements/presentation/achievements_screen.dart';
+import 'features/daily_puzzle/presentation/daily_puzzle_screen.dart';
+import 'features/settings/presentation/settings_screen.dart';
+import 'features/live_ops/presentation/live_ops_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Google Mobile Ads SDK
-  await AdService.initialize();
-
-  // Lock to portrait mode
+  // Lock orientation to portrait for consistent puzzle layout
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Status bar style
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-  ));
+  // Set system UI overlay style for dark theme
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Color(0xFF0F0F1E),
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
 
-  runApp(const GameGuessApp());
+  // Initialize Firebase (uncomment when Firebase is configured)
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+
+  runApp(
+    const ProviderScope(
+      child: LexaroApp(),
+    ),
+  );
 }
 
-class GameGuessApp extends StatelessWidget {
-  const GameGuessApp({super.key});
+/// Root application widget.
+class LexaroApp extends StatelessWidget {
+  const LexaroApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GameProvider()..init(),
-      child: MaterialApp(
-        title: 'GameGuess',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark,
-        home: const _Loader(),
-        routes: {
-          '/leaderboard': (_) => const LeaderboardScreen(),
-          '/store': (_) => const StoreScreen(),
-        },
-      ),
+    return MaterialApp(
+      title: 'Lexaro',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.dark,
+      initialRoute: AppRouter.languageSelect,
+      onGenerateRoute: _generateRoute,
     );
   }
-}
 
-// Shows a loading screen while GameProvider initializes
-class _Loader extends StatefulWidget {
-  const _Loader();
+  Route<dynamic>? _generateRoute(RouteSettings settings) {
+    Widget page;
 
-  @override
-  State<_Loader> createState() => _LoaderState();
-}
+    switch (settings.name) {
+      case AppRouter.languageSelect:
+        page = const LanguageSelectScreen();
+        break;
+      case AppRouter.auth:
+        final language = settings.arguments as String? ?? 'en';
+        page = AuthScreen(selectedLanguage: language);
+        break;
+      case AppRouter.home:
+        page = const HomeScreen();
+        break;
+      case AppRouter.puzzle:
+        final args = settings.arguments as PuzzleScreenArgs? ??
+            const PuzzleScreenArgs();
+        page = PuzzleScreen(args: args);
+        break;
+      case AppRouter.matchmaking:
+        page = const MatchmakingScreen();
+        break;
+      case AppRouter.match:
+        final args = settings.arguments as MatchScreenArgs? ??
+            const MatchScreenArgs();
+        page = MatchScreen(args: args);
+        break;
+      case AppRouter.leaderboard:
+        page = const LeaderboardScreen();
+        break;
+      case AppRouter.store:
+        page = const StoreScreen();
+        break;
+      case AppRouter.achievements:
+        page = const AchievementsScreen();
+        break;
+      case AppRouter.dailyPuzzle:
+        page = const DailyPuzzleScreen();
+        break;
+      case AppRouter.settings:
+        page = const SettingsScreen();
+        break;
+      case AppRouter.liveOps:
+        page = const LiveOpsScreen();
+        break;
+      default:
+        page = const AuthScreen();
+    }
 
-class _LoaderState extends State<_Loader> {
-  bool _ready = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Wait for provider init then navigate
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Provider is already initing via init() in the create callback.
-      // Give it a brief moment then show home screen.
-      await Future.delayed(const Duration(milliseconds: 800));
-      if (!mounted) return;
-      setState(() => _ready = true);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_ready) return const HomeScreen();
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.primaryLight],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.4),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.gamepad_rounded, color: Colors.white, size: 46),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'GameGuess',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30),
-            const CircularProgressIndicator(
-              color: AppColors.primary,
-              strokeWidth: 2,
-            ),
-          ],
-        ),
-      ),
+    return MaterialPageRoute(
+      builder: (_) => page,
+      settings: settings,
     );
   }
 }
